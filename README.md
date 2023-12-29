@@ -7,8 +7,6 @@ git clone https://github.com/saifeldeen-bio/mergeCounts.git
 cd mergeCounts/
 sudo mv mergeCounts ../path-to/usr/bin
 ```
-**
-
 **Usage:**
 ```bash
 mergeCounts <Directory (Name/path)>
