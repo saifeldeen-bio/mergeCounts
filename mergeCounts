@@ -1,0 +1,50 @@
+#!/usr/bin/python3
+
+############################################## About Author #########################################
+# Created by: Saifeldeen M. Ibrahim                                                                 #
+# Emails: saifeldeen.ibrahim [at] ageri.sci.eg or saifeldeenmib99 [at] gmail.com                    #
+# License: MIT License - https://opensource.org/licenses/MIT                                        #
+# Disclaimer: The script comes with no warranty, use at your own risk                               #
+# This script is not intended for commercial use                                                    #
+#####################################################################################################
+
+########################################## info Message ##################################
+helptext = """mergeCounts is a user-friendly tool designed to effortlessly combine count matrices obtained after feature counting in RNA-seq pipelines. It efficiently merges these matrices into a unified format, facilitating downstream analyses like differential gene expression. Users can input either the directory name or the full path, and the tool generates a consolidated count matrix within the same directory.
+
+Usage: mergeCounts <Directory (Name/path)>
+
+"© Saifeldeen M. Ibrahim 2023"
+"""
+################################ Modules #################################
+import sys
+import os
+import pandas as pd
+
+if len(sys.argv) == 1:
+    print(helptext)
+    exit(0)
+################################ Import Files & Creat Count Matrix #################################
+experiment = sys.argv[1] + '/' #experiment name
+CountMatrix = pd.DataFrame() #create an empty DataFrame to append the count matrix
+for sample in os.listdir(experiment): # loop over samples in the current directory
+    print(sample)
+    sample1 = pd.read_csv(f"{experiment}{sample}", delimiter="\t", header=None) # header = None is necessary
+    CountMatrix[f"{sample}"] = sample1[sample1.columns[1]] #this will append the counts only without gene names to each sanple and make colnames = samplename but with .txt extension
+print(CountMatrix)
+#--------------------------remove the extention and rename colnames with new names--------------------------------------#
+colnames = list(CountMatrix.columns)
+newcolNames = []
+for i in colnames:
+    print(i)
+    x = i.replace(".txt", "")
+    newcolNames.append(x)
+CountMatrix.columns = newcolNames #rename column names
+#--------------------------Add gene names coulum--------------------------------------#
+CountMatrix["Genes"] = sample1[sample1.columns[0]] # this will add gene names columns at the end of the matrix
+CountMatrix = CountMatrix[['Genes'] + [col for col in CountMatrix.columns if col != 'Genes']] # re-indixing of "Gene" column to start of the matrix
+################################ Export Count Matrix #################################
+experiment = experiment.replace("/", "")
+CountMatrix.to_csv(f"{experiment}/{experiment}.tsv", index=False, sep="\t")
+
+print("Thank you for using mergeCounts")
+print("© Saifeldeen M. Ibrahim 2023")
