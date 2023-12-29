@@ -15,5 +15,6 @@ mergeCounts <Directory (Name/path)>
 ```
 
 **Author:**
+
 © Saifeldeen M. Ibrahim 2023
 
